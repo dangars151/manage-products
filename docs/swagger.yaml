@@ -1,0 +1,211 @@
+definitions:
+  main.ProductCreateRequest:
+    properties:
+      category_id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      quantity:
+        type: integer
+      reference:
+        type: string
+      status:
+        type: string
+      stock_city:
+        type: string
+      supplier_id:
+        type: string
+    required:
+    - name
+    - reference
+    type: object
+  main.ProductUpdateRequest:
+    properties:
+      category_id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      quantity:
+        type: integer
+      reference:
+        type: string
+      status:
+        type: string
+      stock_city:
+        type: string
+      supplier_id:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/statistics/products-per-category:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Statistics products per category
+  /api/statistics/products-per-supplier:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Statistics products per supplier
+  /distance:
+    get:
+      description: Calculate Distance from your location to a city
+      parameters:
+      - description: City
+        in: query
+        name: city
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Calculate Distance
+  /products:
+    get:
+      description: Fetch products with pagination and filtering
+      parameters:
+      - description: Number of products per page
+        in: query
+        name: perPage
+        type: integer
+      - description: Field to filter by (e.g., supplier, category)
+        in: query
+        name: field
+        type: string
+      - description: Values of field
+        in: query
+        name: values
+        type: array
+      - description: The last reference of previous page
+        in: query
+        name: last_reference
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Get products
+    post:
+      parameters:
+      - description: Product filter request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/main.ProductCreateRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Create product
+  /products/:id:
+    delete:
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Delete product
+    put:
+      parameters:
+      - description: Product filter request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/main.ProductUpdateRequest'
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Update product
+  /products/categories:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Get all categories of products
+  /products/cities:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Get all cities of products
+  /products/export:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      summary: Export products
+  /products/suppliers:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Get all suppliers of products
+swagger: "2.0"

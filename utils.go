@@ -33,6 +33,11 @@ func getIPLocation(ip string) (haversine.Coord, error) {
 	return haversine.Coord{Lat: data.Latitude, Lon: data.Longitude}, nil
 }
 
+// @Summary      Calculate Distance
+// @Description  Calculate Distance from your location to a city
+// @Param        city   query  string     false   "City"
+// @Success      200  {array}  map[string]interface{}
+// @Router       /distance [get]
 func calculateDistance(c *gin.Context) {
 	ip := c.ClientIP()
 	city := c.Query("city")
