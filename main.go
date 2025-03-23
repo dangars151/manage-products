@@ -6,10 +6,23 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-pg/pg/v10"
 	"github.com/jung-kurt/gofpdf"
+	"github.com/umahmood/haversine"
 	"net/http"
 	"strings"
 	"time"
 )
+
+/*
+TODO:   - This is only fake data about Latitude and Longitude of some city
+  - We can add features about manage cities and their latitude, longitude later
+*/
+var cityCoordinates = map[string]haversine.Coord{
+	"Paris":     {Lat: 48.8566, Lon: 2.3522},
+	"Bordeaux":  {Lat: 44.8378, Lon: -0.5792},
+	"Lyon":      {Lat: 45.7640, Lon: 4.8357},
+	"Toulouse":  {Lat: 43.6047, Lon: 1.4442},
+	"Marseille": {Lat: 43.2965, Lon: 5.3698},
+}
 
 func main() {
 	r := gin.Default()
@@ -378,6 +391,22 @@ func main() {
 		c.Header("Content-Disposition", "attachment; filename=output.pdf")
 		c.Header("Content-Type", "application/pdf")
 		c.Data(http.StatusOK, "application/pdf", pdfBuffer.Bytes())
+	})
+
+	r.GET("/distance", calculateDistance)
+
+	r.GET("products/cities", func(c *gin.Context) {
+		cities := make([]string, 0)
+		err := db.Model(&Product{}).Column("stock_city").Group("stock_city").Select(&cities)
+		if err != nil {
+			fmt.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"msg": "have error when get cities",
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, cities)
 	})
 
 	r.Run()
