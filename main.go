@@ -262,6 +262,42 @@ func main() {
 		})
 	})
 
+	r.GET("api/statistics/products-per-category", func(c *gin.Context) {
+		rsp := make([]ProductsPerCategoryResponse, 0)
+
+		err := db.Model(&Product{}).
+			Join("JOIN categories ON categories.id = product.category_id").
+			ColumnExpr("categories.name AS category_name, COUNT(*) AS total_products").
+			Group("categories.name").Select(&rsp)
+		if err != nil {
+			fmt.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"msg": "have error when statistic products by category",
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, rsp)
+	})
+
+	r.GET("api/statistics/products-per-supplier", func(c *gin.Context) {
+		rsp := make([]ProductsPerSupplierResponse, 0)
+
+		err := db.Model(&Product{}).
+			Join("JOIN suppliers ON suppliers.id = product.supplier_id").
+			ColumnExpr("suppliers.name AS supplier_name, COUNT(*) AS total_products").
+			Group("suppliers.name").Select(&rsp)
+		if err != nil {
+			fmt.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"msg": "have error when statistic products by supplier",
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, rsp)
+	})
+
 	r.Run()
 }
 
@@ -315,4 +351,14 @@ type ProductRequest struct {
 type Supplier struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
+}
+
+type ProductsPerCategoryResponse struct {
+	CategoryName  string `json:"category_name"`
+	TotalProducts int    `json:"total_products"`
+}
+
+type ProductsPerSupplierResponse struct {
+	SupplierName  string `json:"supplier_name"`
+	TotalProducts int    `json:"total_products"`
 }
