@@ -12,6 +12,7 @@ import (
 func main() {
 	r := gin.Default()
 
+	// TODO: read user, password, host... from env
 	opt, err := pg.ParseURL("postgres://postgres:M1sIWvQ2D4MfWke7ReSt2IFHVPRXtpp6@3.1.28.125:5432/backend_test")
 	if err != nil {
 		panic(err)
@@ -22,10 +23,6 @@ func main() {
 	r.GET("products", func(c *gin.Context) {
 		var req ProductRequest
 		c.BindQuery(&req)
-
-		if req.Page <= 0 {
-			req.Page = 1
-		}
 
 		if req.PerPage <= 0 {
 			req.PerPage = 10
@@ -65,11 +62,14 @@ func main() {
 			query.Where(fmt.Sprintf("%v IN (?)", fieldToQuery), pg.In(values))
 		}
 
-		total, err := query.Relation("Category").Relation("Supplier").
-			Order("added_date DESC").
-			Offset((req.Page - 1) * req.PerPage).
+		if req.LastReference != "" {
+			query.Where("reference < ?", req.LastReference)
+		}
+
+		err = query.Relation("Category").Relation("Supplier").
+			Order("reference DESC").
 			Limit(req.PerPage).
-			SelectAndCount()
+			Select()
 
 		if err != nil {
 			fmt.Println(err)
@@ -81,7 +81,6 @@ func main() {
 
 		c.JSON(http.StatusOK, gin.H{
 			"products": products,
-			"total":    total,
 		})
 	})
 
@@ -309,8 +308,8 @@ type Category struct {
 }
 
 type ProductRequest struct {
-	Page    int `form:"page"`
-	PerPage int `form:"perPage"`
+	LastReference string `form:"last_reference"`
+	PerPage       int    `form:"perPage"`
 }
 
 type Supplier struct {
