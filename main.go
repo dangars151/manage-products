@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-pg/pg/v10"
+	"github.com/jung-kurt/gofpdf"
 	"net/http"
 	"strings"
 	"time"
@@ -296,6 +298,86 @@ func main() {
 		}
 
 		c.JSON(http.StatusOK, rsp)
+	})
+
+	r.GET("products/export", func(c *gin.Context) {
+		pdf := gofpdf.New("P", "mm", "A2", "")
+		pdf.AddPage()
+		pdf.SetFont("Arial", "B", 16)
+
+		pdf.Cell(40, 10, "Test - FE Data")
+		pdf.Ln(10)
+
+		header := []string{
+			"Product Reference", "Product Name", "Date Added", "Status", "Product Category",
+			"Price", "Stock Location (City)", "Supplier", "Available Quantity",
+		}
+
+		products := make([]Product, 0)
+		err = db.Model(&products).Relation("Category").Relation("Supplier").Order("reference DESC").Select()
+		if err != nil {
+			fmt.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"msg": "have error when get products",
+			})
+			return
+		}
+
+		data := make([][]string, 0)
+		for _, product := range products {
+			d := []string{product.Reference, product.Name, product.AddedDate.Format(time.DateOnly), product.Status}
+
+			if product.Category != nil {
+				d = append(d, product.Category.Name)
+			} else {
+				d = append(d, "")
+			}
+
+			d = append(d, fmt.Sprintf("%v", product.Price))
+			d = append(d, product.StockCity)
+
+			if product.Supplier != nil {
+				d = append(d, product.Supplier.Name)
+			} else {
+				d = append(d, "")
+			}
+
+			d = append(d, fmt.Sprintf("%v", product.Quantity))
+
+			data = append(data, d)
+		}
+
+		colWidths := []float64{45, 60, 30, 30, 50, 30, 50, 40, 50}
+
+		// Draw header of table
+		pdf.SetFont("Arial", "B", 12)
+		for i, col := range header {
+			pdf.CellFormat(colWidths[i], 10, col, "1", 0, "C", false, 0, "")
+		}
+		pdf.Ln(-1)
+
+		// Draw data of table
+		pdf.SetFont("Arial", "", 12)
+		for _, row := range data {
+			for i, col := range row {
+				pdf.CellFormat(colWidths[i], 10, col, "1", 0, "C", false, 0, "")
+			}
+			pdf.Ln(-1)
+		}
+
+		var pdfBuffer bytes.Buffer
+		err := pdf.Output(&pdfBuffer)
+		if err != nil {
+			fmt.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"msg": "have error when export products",
+			})
+			return
+		}
+
+		c.Header("Content-Disposition", "attachment; filename=output.pdf")
+		c.Header("Content-Type", "application/pdf")
+		c.Data(http.StatusOK, "application/pdf", pdfBuffer.Bytes())
 	})
 
 	r.Run()
