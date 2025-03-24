@@ -6,14 +6,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/umahmood/haversine"
 	"net/http"
+	"os"
 )
 
 func getIPLocation(ip string) (haversine.Coord, error) {
-	// TODO: read access_key from env
+	ACCESS_KEY_IP_API := os.Getenv("ACCESS_KEY_IP_API")
 	resp, err := http.Get(
 		fmt.Sprintf(
-			"https://api.ipapi.com/api/%v?access_key=e789bc91bb4e71b3a83f10b2be7e942f",
-			ip,
+			"https://api.ipapi.com/api/%v?access_key=%v",
+			ip, ACCESS_KEY_IP_API,
 		),
 	)
 	if err != nil {
