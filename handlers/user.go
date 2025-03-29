@@ -14,6 +14,11 @@ type UserHandler struct {
 	DB *pg.DB
 }
 
+// @Summary      SignUp
+// @Description  create account for user to use api
+// @Param        request  body  models.CreateUserRequest  true  "Create user request"
+// @Success      200  {array}  map[string]interface{}
+// @Router       /users/sign-up [post]
 func (h *UserHandler) SignUp(c *gin.Context) {
 	var req models.CreateUserRequest
 	if err := c.Bind(&req); err != nil {
@@ -76,6 +81,11 @@ func (h *UserHandler) SignUp(c *gin.Context) {
 	})
 }
 
+// @Summary      SignIn
+// @Description  signin to get token to use api
+// @Param        request  body  models.LoginRequest  true  "Login"
+// @Success      200  {array}  map[string]interface{}
+// @Router       /users/sign-in [post]
 func (h *UserHandler) SignIn(c *gin.Context) {
 	var req models.LoginRequest
 	if err := c.Bind(&req); err != nil {

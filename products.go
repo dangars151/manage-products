@@ -17,6 +17,7 @@ type ProductHandler struct {
 
 // @Summary      Get products
 // @Description  Fetch products with pagination and filtering
+// @Description  Add "Authorization: Bearer {your_token}" in headers to authenticate
 // @Param        perPage  		query  int     false   "Number of products per page"
 // @Param        field    		query  string  false   "Field to filter by (e.g., supplier, category)"
 // @Param        values   		query  array   false   "Values of field"
@@ -88,6 +89,7 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 }
 
 // @Summary      Create product
+// @Description  Add "Authorization: Bearer {your_token}" in headers to authenticate
 // @Param        request  body  ProductCreateRequest  true  "Product filter request"
 // @Success      200  {array}  map[string]interface{}
 // @Router       /products [post]
@@ -140,6 +142,7 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 }
 
 // @Summary      Get all categories of products
+// @Description  Add "Authorization: Bearer {your_token}" in headers to authenticate
 // @Success      200  {array}  map[string]interface{}
 // @Router       /products/categories [get]
 func (h *ProductHandler) GetCategories(c *gin.Context) {
@@ -159,6 +162,7 @@ func (h *ProductHandler) GetCategories(c *gin.Context) {
 }
 
 // @Summary      Get all suppliers of products
+// @Description  Add "Authorization: Bearer {your_token}" in headers to authenticate
 // @Success      200  {array}  map[string]interface{}
 // @Router       /products/suppliers [get]
 func (h *ProductHandler) GetSuppliers(c *gin.Context) {
@@ -178,6 +182,7 @@ func (h *ProductHandler) GetSuppliers(c *gin.Context) {
 }
 
 // @Summary      Update product
+// @Description  Add "Authorization: Bearer {your_token}" in headers to authenticate
 // @Param        request  body  ProductUpdateRequest  true  "Product filter request"
 // @Param        id  path  int  true  "Product ID"
 // @Success      200  {array}  map[string]interface{}
@@ -256,6 +261,7 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 }
 
 // @Summary      Delete product
+// @Description  Add "Authorization: Bearer {your_token}" in headers to authenticate
 // @Param        id  path  int  true  "Product ID"
 // @Success      200  {array}  map[string]interface{}
 // @Router       /products/:id [delete]
@@ -285,6 +291,7 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 }
 
 // @Summary      Statistics products per category
+// @Description  Add "Authorization: Bearer {your_token}" in headers to authenticate
 // @Success      200  {array}  map[string]interface{}
 // @Router       /api/statistics/products-per-category [get]
 func (h *ProductHandler) StatisticsProductsPerCategory(c *gin.Context) {
@@ -306,6 +313,7 @@ func (h *ProductHandler) StatisticsProductsPerCategory(c *gin.Context) {
 }
 
 // @Summary      Statistics products per supplier
+// @Description  Add "Authorization: Bearer {your_token}" in headers to authenticate
 // @Success      200  {array}  map[string]interface{}
 // @Router       /api/statistics/products-per-supplier [get]
 func (h *ProductHandler) StatisticsProductsPerSupplier(c *gin.Context) {
@@ -327,6 +335,9 @@ func (h *ProductHandler) StatisticsProductsPerSupplier(c *gin.Context) {
 }
 
 // @Summary      Export products
+// @Description  Add "Authorization: Bearer {your_token}" in headers to authenticate
+// @Param        field    		query  string  false   "Field to filter by (e.g., supplier, category)"
+// @Param        values   		query  array   false   "Values of field"
 // @Success      200 {file}  pdf
 // @Router       /products/export [get]
 func (h *ProductHandler) ExportProduct(c *gin.Context) {
@@ -443,6 +454,7 @@ func (h *ProductHandler) ExportProduct(c *gin.Context) {
 }
 
 // @Summary      Get all cities of products
+// @Description  Add "Authorization: Bearer {your_token}" in headers to authenticate
 // @Success      200  {array}  map[string]interface{}
 // @Router       /products/cities [get]
 func (h *ProductHandler) GetCities(c *gin.Context) {

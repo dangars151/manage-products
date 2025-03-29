@@ -17,6 +17,7 @@ const docTemplate = `{
     "paths": {
         "/api/statistics/products-per-category": {
             "get": {
+                "description": "Add \"Authorization: Bearer {your_token}\" in headers to authenticate",
                 "summary": "Statistics products per category",
                 "responses": {
                     "200": {
@@ -34,6 +35,7 @@ const docTemplate = `{
         },
         "/api/statistics/products-per-supplier": {
             "get": {
+                "description": "Add \"Authorization: Bearer {your_token}\" in headers to authenticate",
                 "summary": "Statistics products per supplier",
                 "responses": {
                     "200": {
@@ -51,7 +53,7 @@ const docTemplate = `{
         },
         "/distance": {
             "get": {
-                "description": "Calculate Distance from your location to a city",
+                "description": "Add \"Authorization: Bearer {your_token}\" in headers to authenticate\nCalculate Distance from your location to a city",
                 "summary": "Calculate Distance",
                 "parameters": [
                     {
@@ -77,7 +79,7 @@ const docTemplate = `{
         },
         "/products": {
             "get": {
-                "description": "Fetch products with pagination and filtering",
+                "description": "Fetch products with pagination and filtering\nAdd \"Authorization: Bearer {your_token}\" in headers to authenticate",
                 "summary": "Get products",
                 "parameters": [
                     {
@@ -119,6 +121,7 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "description": "Add \"Authorization: Bearer {your_token}\" in headers to authenticate",
                 "summary": "Create product",
                 "parameters": [
                     {
@@ -147,6 +150,7 @@ const docTemplate = `{
         },
         "/products/:id": {
             "put": {
+                "description": "Add \"Authorization: Bearer {your_token}\" in headers to authenticate",
                 "summary": "Update product",
                 "parameters": [
                     {
@@ -180,6 +184,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "description": "Add \"Authorization: Bearer {your_token}\" in headers to authenticate",
                 "summary": "Delete product",
                 "parameters": [
                     {
@@ -206,6 +211,7 @@ const docTemplate = `{
         },
         "/products/categories": {
             "get": {
+                "description": "Add \"Authorization: Bearer {your_token}\" in headers to authenticate",
                 "summary": "Get all categories of products",
                 "responses": {
                     "200": {
@@ -223,6 +229,7 @@ const docTemplate = `{
         },
         "/products/cities": {
             "get": {
+                "description": "Add \"Authorization: Bearer {your_token}\" in headers to authenticate",
                 "summary": "Get all cities of products",
                 "responses": {
                     "200": {
@@ -240,7 +247,22 @@ const docTemplate = `{
         },
         "/products/export": {
             "get": {
+                "description": "Add \"Authorization: Bearer {your_token}\" in headers to authenticate",
                 "summary": "Export products",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Field to filter by (e.g., supplier, category)",
+                        "name": "field",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "description": "Values of field",
+                        "name": "values",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -253,7 +275,66 @@ const docTemplate = `{
         },
         "/products/suppliers": {
             "get": {
+                "description": "Add \"Authorization: Bearer {your_token}\" in headers to authenticate",
                 "summary": "Get all suppliers of products",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "additionalProperties": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/sign-in": {
+            "post": {
+                "description": "signin to get token to use api",
+                "summary": "SignIn",
+                "parameters": [
+                    {
+                        "description": "Login",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "additionalProperties": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/sign-up": {
+            "post": {
+                "description": "create account for user to use api",
+                "summary": "SignUp",
+                "parameters": [
+                    {
+                        "description": "Create user request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateUserRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -328,6 +409,43 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "supplier_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CreateUserRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }

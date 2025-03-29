@@ -35,6 +35,7 @@ func getIPLocation(ip string) (haversine.Coord, error) {
 }
 
 // @Summary      Calculate Distance
+// @Description  Add "Authorization: Bearer {your_token}" in headers to authenticate
 // @Description  Calculate Distance from your location to a city
 // @Param        city   query  string     false   "City"
 // @Success      200  {array}  map[string]interface{}

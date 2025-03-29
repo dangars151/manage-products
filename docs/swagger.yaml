@@ -40,11 +40,37 @@ definitions:
       supplier_id:
         type: string
     type: object
+  models.CreateUserRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  models.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
 info:
   contact: {}
 paths:
   /api/statistics/products-per-category:
     get:
+      description: 'Add "Authorization: Bearer {your_token}" in headers to authenticate'
       responses:
         "200":
           description: OK
@@ -56,6 +82,7 @@ paths:
       summary: Statistics products per category
   /api/statistics/products-per-supplier:
     get:
+      description: 'Add "Authorization: Bearer {your_token}" in headers to authenticate'
       responses:
         "200":
           description: OK
@@ -67,7 +94,9 @@ paths:
       summary: Statistics products per supplier
   /distance:
     get:
-      description: Calculate Distance from your location to a city
+      description: |-
+        Add "Authorization: Bearer {your_token}" in headers to authenticate
+        Calculate Distance from your location to a city
       parameters:
       - description: City
         in: query
@@ -84,7 +113,9 @@ paths:
       summary: Calculate Distance
   /products:
     get:
-      description: Fetch products with pagination and filtering
+      description: |-
+        Fetch products with pagination and filtering
+        Add "Authorization: Bearer {your_token}" in headers to authenticate
       parameters:
       - description: Number of products per page
         in: query
@@ -112,6 +143,7 @@ paths:
             type: array
       summary: Get products
     post:
+      description: 'Add "Authorization: Bearer {your_token}" in headers to authenticate'
       parameters:
       - description: Product filter request
         in: body
@@ -130,6 +162,7 @@ paths:
       summary: Create product
   /products/:id:
     delete:
+      description: 'Add "Authorization: Bearer {your_token}" in headers to authenticate'
       parameters:
       - description: Product ID
         in: path
@@ -146,6 +179,7 @@ paths:
             type: array
       summary: Delete product
     put:
+      description: 'Add "Authorization: Bearer {your_token}" in headers to authenticate'
       parameters:
       - description: Product filter request
         in: body
@@ -169,6 +203,7 @@ paths:
       summary: Update product
   /products/categories:
     get:
+      description: 'Add "Authorization: Bearer {your_token}" in headers to authenticate'
       responses:
         "200":
           description: OK
@@ -180,6 +215,7 @@ paths:
       summary: Get all categories of products
   /products/cities:
     get:
+      description: 'Add "Authorization: Bearer {your_token}" in headers to authenticate'
       responses:
         "200":
           description: OK
@@ -191,6 +227,16 @@ paths:
       summary: Get all cities of products
   /products/export:
     get:
+      description: 'Add "Authorization: Bearer {your_token}" in headers to authenticate'
+      parameters:
+      - description: Field to filter by (e.g., supplier, category)
+        in: query
+        name: field
+        type: string
+      - description: Values of field
+        in: query
+        name: values
+        type: array
       responses:
         "200":
           description: OK
@@ -199,6 +245,7 @@ paths:
       summary: Export products
   /products/suppliers:
     get:
+      description: 'Add "Authorization: Bearer {your_token}" in headers to authenticate'
       responses:
         "200":
           description: OK
@@ -208,4 +255,42 @@ paths:
               type: object
             type: array
       summary: Get all suppliers of products
+  /users/sign-in:
+    post:
+      description: signin to get token to use api
+      parameters:
+      - description: Login
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: SignIn
+  /users/sign-up:
+    post:
+      description: create account for user to use api
+      parameters:
+      - description: Create user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateUserRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: SignUp
 swagger: "2.0"
