@@ -6,6 +6,7 @@ import (
 	"github.com/go-pg/pg/v10"
 	"github.com/joho/godotenv"
 	"github.com/umahmood/haversine"
+	"manage-products/handlers"
 	"os"
 	"time"
 )
@@ -47,6 +48,12 @@ func main() {
 	db := pg.Connect(opt)
 
 	productHandler := ProductHandler{db: db}
+
+	userHandler := handlers.UserHandler{DB: db}
+
+	r.POST("users/sign-up", userHandler.SignUp)
+
+	r.POST("users/sign-in", userHandler.SignIn)
 
 	r.GET("products", productHandler.GetProducts)
 
