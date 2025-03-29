@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"manage-products/models"
 	"os"
@@ -17,4 +18,22 @@ func GenerateToken(user models.User) (string, error) {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(JWT_SECRET))
+}
+
+func VerifyToken(tokenString string) (*jwt.Token, error) {
+	JWT_SECRET := os.Getenv("JWT_SECRET")
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(JWT_SECRET), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, fmt.Errorf("invalid token")
+	}
+
+	return token, nil
 }

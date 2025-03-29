@@ -55,27 +55,27 @@ func main() {
 
 	r.POST("users/sign-in", userHandler.SignIn)
 
-	r.GET("products", productHandler.GetProducts)
+	r.GET("products", middlewares.AuthenticateMiddleware, productHandler.GetProducts)
 
-	r.GET("products/categories", productHandler.GetCategories)
+	r.GET("products/categories", middlewares.AuthenticateMiddleware, productHandler.GetCategories)
 
-	r.GET("products/suppliers", productHandler.GetSuppliers)
+	r.GET("products/suppliers", middlewares.AuthenticateMiddleware, productHandler.GetSuppliers)
 
-	r.POST("products", productHandler.CreateProduct)
+	r.POST("products", middlewares.AuthenticateMiddleware, productHandler.CreateProduct)
 
-	r.PUT("products/:id", productHandler.UpdateProduct)
+	r.PUT("products/:id", middlewares.AuthenticateMiddleware, productHandler.UpdateProduct)
 
-	r.DELETE("products/:id", productHandler.DeleteProduct)
+	r.DELETE("products/:id", middlewares.AuthenticateMiddleware, productHandler.DeleteProduct)
 
-	r.GET("api/statistics/products-per-category", productHandler.StatisticsProductsPerCategory)
+	r.GET("api/statistics/products-per-category", middlewares.AuthenticateMiddleware, productHandler.StatisticsProductsPerCategory)
 
-	r.GET("api/statistics/products-per-supplier", productHandler.StatisticsProductsPerSupplier)
+	r.GET("api/statistics/products-per-supplier", middlewares.AuthenticateMiddleware, productHandler.StatisticsProductsPerSupplier)
 
-	r.GET("products/export", productHandler.ExportProduct)
+	r.GET("products/export", middlewares.AuthenticateMiddleware, productHandler.ExportProduct)
 
-	r.GET("/distance", calculateDistance)
+	r.GET("/distance", middlewares.AuthenticateMiddleware, calculateDistance)
 
-	r.GET("products/cities", productHandler.GetCities)
+	r.GET("products/cities", middlewares.AuthenticateMiddleware, productHandler.GetCities)
 
 	r.Run()
 }

@@ -343,7 +343,40 @@ func (h *ProductHandler) ExportProduct(c *gin.Context) {
 	}
 
 	products := make([]Product, 0)
-	err := h.db.Model(&products).Relation("Category").Relation("Supplier").Order("reference DESC").Select()
+	query := h.db.Model(&products)
+
+	/*
+		 Parse dynamic filters:
+			- field: field needed to query
+			- values: values needed to query
+			- example: reference = ["PROD-202401-029", "PROD-202401-039"]
+	*/
+	params := make(map[string]interface{})
+	for key, values := range c.Request.URL.Query() {
+		if key == "field" && len(values) > 0 {
+			params[key] = values[0]
+		}
+		if key == "values" {
+			params[key] = values
+		}
+	}
+
+	fieldToQuery, _ := params["field"].(string)
+	values := params["values"]
+	if fieldToQuery != "" && values != nil {
+		if fieldToQuery == "name" {
+			fieldToQuery = "product.name"
+		}
+		if fieldToQuery == "category" {
+			fieldToQuery = "category.name"
+		}
+		if fieldToQuery == "supplier" {
+			fieldToQuery = "supplier.name"
+		}
+		query.Where(fmt.Sprintf("%v IN (?)", fieldToQuery), pg.In(values))
+	}
+
+	err := query.Relation("Category").Relation("Supplier").Order("reference DESC").Select()
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
