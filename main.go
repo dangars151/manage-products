@@ -7,6 +7,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/umahmood/haversine"
 	"manage-products/handlers"
+	"manage-products/middlewares"
 	"os"
 	"time"
 )
